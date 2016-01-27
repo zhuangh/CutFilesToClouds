@@ -26,7 +26,6 @@
 *.out
 *.synctex.gz
 *.swp
-*.pdf
 *~
 
 *.o

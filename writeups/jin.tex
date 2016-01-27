@@ -1,0 +1,9 @@
+\subsubsection{Hash Function}
+A hash functin is to transform an arbitray set of data elements, such as a text file into a single fixe length value (the hash). Its main advantage is the computed hash value may then be used to verify the integerity of copies of the original data without providing any means to derive said original data. We want a strong hash function (without collision) to generate a unique hash value for each arbitrary set of data. SHA-2 is a set of cryptographic strong hash functions that can prevent the exposed attack on SHA1 family hash algorithms.So in this system we adopt SHA2-256 algorithm in the SHA2-family hash function. SHA2-256 can transfer any data into fixed 32bytes length hash value.
+
+\subsubsection{File Segment}
+Our system need a "black-box" key to generate the hash value to determine how to partition the file into fragments. Each time a new account has been created and then this "black-box" key is required to be created by the user. E.g, the "black-box" key is "ucsd" and the corresponding hash value is "0x 8c:f3:95:33:75:84....". We let each two hexical value as a group so that each SHA2-256 hash value can support 32 groups. For each group g(i), we take the method that add the two hexical values together (e.g. Ox8c represents 0x8 + 0xC = 20) and divide it by the sum of each digits (e.g. 20+18+...)in the hash value to determine how much percentage of file fragment f(i) will take. In this way, we are going to partition a file into 32 fragments at most. Next Step is to calculate the actual size of each fragment shall hold, a straightforward way is to multiple the size of one document by the percentage of each document fragment. As all the fragments are generated, we assign the filename for each document with the hash value of itself. A table for each document called file\_Structure\_index is used to record all the filenames belongs to it.   
+
+
+
+

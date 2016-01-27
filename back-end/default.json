@@ -1,0 +1,25 @@
+{
+   "clouds":[
+      {
+         "id":0,
+         "type":"dropbox",
+         "token1":"ryfmsl9lqpkaz0u",
+         "token2":"h8ahi6b9xfdr92e",
+         "email":"trustedbridge@gamil.com"
+      },
+      {
+         "id":1,
+         "type":"dropbox",
+         "token1":"27i3qqqqjzv2z0v",
+         "token2":"5c0vhf1qmybmxna",
+         "email":"trustedbridge+2@gamil.com"
+      },
+      {
+         "id":2,
+         "type":"dropbox",
+         "token1":"1svh5pveuyy3cpu",
+         "token2":"g4cedl3tbua0eoo",
+         "email":"trustedbridge+3@gamil.com"
+      }
+   ]
+}

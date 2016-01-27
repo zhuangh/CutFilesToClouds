@@ -1,0 +1,81 @@
+
+
+Test Cloud Account
+==================
+Dropbox
+***@***.***
+
+Google Drive
+
+***@***.***
+
+Key-Value Storage Format
+========================
+
+Key             				Value
+---------------------------------------------------
+${username}_clouds				(JSON) clouds
+${username}_files				list<filename>
+${username}_${filename}			list<segment_name>
+${username}_${segment_name}		cloud_id
+${username}_key                 any string
+---------------------------------------------------
+
+(JSON) clouds
+-------------
+{
+   "clouds":[
+      {
+         "id":0,
+         "type":"dropbox",
+         "token1":"12345",
+         "token2":"67890"
+      },
+      {
+
+      }
+      ...
+   ]
+}
+
+
+Example
+=======
+
+Key             	Value
+-----------------------------------------------------------------
+early_cloud			{
+					   "clouds":[
+					      {
+					         "id":0,
+					         "type":"dropbox",
+					         "token1":"12345",
+					         "token2":"67890"
+					      },
+					      {
+					         "id":1,
+					         "type":"dropbox",
+					         "token1":"12345",
+					         "token2":"67890"
+					      },
+					      {
+					         "id":2,
+					         "type":"google",
+					         "token1":"12345",
+					         "token2":"67890"
+					      }
+					   ]
+					}
+early_files			list<"file1.avi","file2.txt","file3.jpg"...>
+early_file1.avi		list<"seg1.seg","seg2.seg","seg3.seg"...>
+early_file2.txt		list<"seg1.seg","seg2.seg","seg3.seg"...>
+.
+.
+.
+early_seg1.seg		0
+early_seg2.seg		1
+early_seg3.seg		2
+.
+.
+.
+-----------------------------------------------------------------

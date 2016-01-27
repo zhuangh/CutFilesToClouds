@@ -1,0 +1,96 @@
+
+SPLITS(1)                                               SPLITS(1)
+
+NAME
+       splits - split a binary file into multiple chunks
+
+SYNOPSIS
+       splits infile [ chunksize ]
+
+DESCRIPTION
+       splits  reads  an  input file infile (or standard input if
+       infile is `-') and creates  multiple  output  files  which
+       consist  of  the contents of infile broken into sequential
+       pieces of size chunksize, given  in  `K'  (units  of  1024
+       bytes).   If  no chunksize is specified, splits assumes an
+       output file size of 100K (102400 bytes).
+
+       splits is useful when transmitting large binary files over
+       unreliable  modem  links with uucp.  An accidental discon-
+       nection during a transmission causes the  loss  of  every-
+       thing  received  up  to  that point, requiring the user to
+       start over from scratch.  Breaking the file into  multiple
+       chunks   with  splits  means  that  a  disconnection  only
+       requires re-sending the chunk being transmitted  when  the
+       hang-up  occurred;  if  a chunk size substantially smaller
+       than the average time between disconnects is chosen,  lost
+       communication time will be minimised.
+
+       splits may also be used to split large files being sent by
+       electronic mail into pieces small enough to  pass  through
+       intermediate mail forwarding sites.  Some Internet mailers
+       cannot process messages larger than  64K.   splits  allows
+       you  to  circumvent  this limitation.  When sending binary
+       files through electronic mail, you'll also have to  encode
+       the  output  of  splits with uuencode or base64 since most
+       mail systems accept only 7 bit ASCII characters.
+
+       Finally, splits allows subdividing large files into pieces
+       which fit on various kinds of removable media such as 1.44
+       megabyte floppy discs.
+
+       The collection  of  chunks  created  with  splits  can  be
+       reassembled with cat.  Simply use:
+
+       cat infile.*  >infile
+
+       to concatenate all the chunks together into an output file
+       identical to the original splits input file.  MS-DOS users
+       can use the:
+
+       COPY /B infile1+...+infilen outfile
+
+       command to concatenate chunks created with splits.
+
+       When sending files in multiple chunks, it's wise to accom-
+       pany the transmission with a checksum created,  for  exam-
+       ple,  with  sum  or brik, so that the recipient can verify
+       that all the pieces were correctly received and  assembled
+       in the proper order.
+
+OPTIONS
+       None.
+
+FILES
+       If  infile  is  `-' splits obtains its input from standard
+       input.  In this case the output files are named StdIn.001,
+       StdIn.002, etc.
+
+BUGS
+       splits  assumes it can allocate memory buffers as large as
+       the chunk size and that it can read and write blocks  that
+       large.  Surgery will be required if you wish to port it to
+       16 bit architectures.
+
+       splits must read input and write output  files  in  binary
+       mode,  without  any  translation  of end of line or end of
+       file characters.  The splits  source  code  contains  code
+       conditional  on  WIN32 which sets binary mode on that sys-
+       tem.  If you're porting splits to another  platform  which
+       distinguishes  text  and binary I/O (Unix systems do not),
+       you'll need to add equivalent code to set binary I/O mode.
+
+SEE ALSO
+       base64(1),  brik(1),  cat(1),  split(1),  sum(1), uucp(1),
+       uuencode(1)
+
+AUTHOR
+            John Walker
+            <http://www.fourmilab.ch/>
+
+       This software is in the public domain.  Permission to use,
+       copy,  modify,  and distribute this software and its docu-
+       mentation for  any  purpose  and  without  fee  is  hereby
+       granted,  without  any  conditions  or restrictions.  This
+       software is provided ``as is'' without express or  implied
+       warranty.

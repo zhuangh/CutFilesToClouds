@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Trusted Bridge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- CSS -->
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <style type="text/css">
+
+      /* Sticky footer styles
+      -------------------------------------------------- */
+
+      html,
+      body {
+        height: 100%;
+        /* The html and body elements cannot have any padding or margin. */
+      }
+
+      /* Wrapper for page content to push down footer */
+      #wrap {
+        min-height: 100%;
+        height: auto !important;
+        height: 100%;
+        /* Negative indent footer by it's height */
+        margin: 0 auto -60px;
+      }
+
+      /* Set the fixed height of the footer here */
+      #push,
+      #footer {
+        height: 60px;
+      }
+      #footer {
+        background-color: #f5f5f5;
+      }
+
+      /* Lastly, apply responsive CSS fixes as necessary */
+      @media (max-width: 767px) {
+        #footer {
+          margin-left: -20px;
+          margin-right: -20px;
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+      }
+
+      /* Custom page CSS
+      -------------------------------------------------- */
+      /* Not required for template or sticky footer method. */
+
+      .container {
+        width: auto;
+        max-width: 680px;
+      }
+      .container .credit {
+        margin: 20px 0;
+      }
+      .filelist{
+        width: auto;
+        max-width: 680px;
+      }
+      .alert{
+        display: none;
+      }
+      .loading{
+        display: none;
+      }
+
+    </style>
+    <link href="./css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+    <link rel="stylesheet" href="css/jquery.fileupload-ui.css">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="./js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="./ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="./ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="./ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="./ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="./ico/favicon.png">
+
+  </head>
+
+  <body>
+
+
+    <!-- Part 1: Wrap all page content here -->
+    <div id="wrap">
+
+      <!-- Begin page content -->
+      <div class="container">
+        <div class="page-header">
+          <h1>Trusted Bridge</h1>
+        </div>
+        <form id="fileupload" action="upload.php" method="POST" enctype="multipart/form-data">
+          <input class="server_info" name="server_ip" type="text" placeholder="TrustedBridge Server IP">
+          <input class="server_info" name="server_port" type="text" placeholder="Port" maxlength="5">
+          <br/>
+        
+          <!-- The fileinput-button span is used to style the file input field as button -->
+          <span class="btn btn-success fileinput-button">
+              <i class="icon-plus icon-white"></i>
+              <span>Add File</span>
+              <input id="upload" type="file" name="files[]" multiple>
+          </span>
+          <br/><br/>
+          <!-- The global progress bar -->
+          <div id="progress" class="progress progress-success progress-striped">
+              <div class="bar"></div>
+          </div>
+        </form>
+
+        <div class="alert">
+          <button type="button" class="close">&times;</button>
+          <strong>Warning!</strong>
+          <span id="alert-msg"></span>
+        </div>
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Download</th>
+            </tr>
+          </thead>
+          <tbody id="file-list">
+            
+          </tbody>
+        </table>
+
+      </div>
+
+
+
+      <div id="push"></div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">
+          CSE223B Final Project
+          by <em>Hao Zhuang</em>, <em>Jin Wang</em>, and <em>Erh-Li Shen</em>.
+        </p>
+      </div>
+    </div>
+
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+    <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+    <script src="js/vendor/jquery.ui.widget.js"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="js/jquery.iframe-transport.js"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="js/jquery.fileupload.js"></script>
+
+    <script>
+    /*jslint unparam: true */
+    /*global window, $ */
+    
+    $('[name="server_ip"]').val(localStorage.getItem("server_ip"));
+    $('[name="server_port"]').val(localStorage.getItem("server_port"));
+
+    // Change this to the location of your server-side upload handler:
+    var url = 'action.php?action=upload&'+
+              'server_ip=' + $('[name="server_ip"]').val() +
+              '&server_port=' + $('[name="server_port"]').val();
+    var jqXHR = $('#fileupload').fileupload({
+        url: url,
+        dataType: 'json',
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .bar').css(
+                'width',
+                progress + '%'
+            );
+        },
+        done: function (e, data) {
+          console.log("done");
+          if (data.error != null){
+            myError(data.error);
+            return;
+          }
+        },
+        fail: function (e, data) {
+          console.log("fail");
+          if (data.error != null){
+            myError(data.error);
+            return;
+          }
+        },
+        always: function (e, data) {
+          getFileList();
+        }
+    });
+    
+    $('#fileupload').click( function() {
+      $('#progress .bar').css('width','0%');
+    });
+
+    function myError(msg){
+      //$('.alert').show();
+      $('#alert-msg').html(msg);
+    }
+
+    $('.close').click(function(){
+      $('.alert').hide();
+    });
+
+    function getFileList(){
+      console.log('getFileList');
+      $('#file-list').empty();
+      
+      var jqxhr = $.getJSON('action.php', {
+        action: "getlist",
+        server_ip: $('[name="server_ip"]').val(),
+        server_port: $('[name="server_port"]').val()
+      })
+      .done(function(data) {
+        if(data.error != null){
+          myError(data.error);
+          return;
+        }
+
+        $.each( data.files, function( i, file ) {
+            $('#file-list').append(
+              $('<tr/>', {'class': 'file-item'}).append(
+                $('<td/>', {text: file})
+              )
+              .append(
+                $('<td/>').append(
+                  $('<a/>', {'href': '#'+file, 'class': 'download'}).append(
+                    '<i class="icon-download-alt"></i>'
+                  )
+                  .append(
+                    '<img src="img/ajax-loader.gif" class="loading"/>'
+                  )
+                  .on('click', onDownloadLinkClicked)
+                ) 
+              )
+            );
+        });
+
+        if (data.files.length==0){
+
+          myError("You don\'t have any file. Add one now!");
+
+          $('#file-list').append(
+            $('<tr/>', {'class': 'file-item'}).append(
+              $('<td/>', { 'colspan':'2' , text: 'You don\'t have any file. Add one now!'})
+            )
+          );          
+        }
+
+      });
+
+      jqxhr.fail(function(){
+        myError("Connection Failed.");
+      });
+    }
+    getFileList();
+
+    function onDownloadLinkClicked(event){
+      
+      var loading = $(this).children('.loading')
+      loading.show();
+
+      var temp = event.currentTarget.hash;
+      var file = temp.replace('#','');
+      
+      $.getJSON('action.php', {
+        action: 'download',
+        filename: file,
+        server_ip: $('[name="server_ip"]').val(),
+        server_port: $('[name="server_port"]').val()
+      }) 
+      .done(function(data){
+        if(data.error != null){
+          myError(data.error);
+          return;
+        }
+        var file_url = data.link;
+        window.location.href = file_url;
+      });
+
+      var intervalId = setInterval(function(){
+        $.getJSON('action.php',{
+          action: 'check',
+          filename: file
+        })
+        .done(function(data){
+          if(data.ready){
+            window.location.href = "download.php?file=" + file;
+            clearInterval(intervalId);
+            loading.hide();
+          }
+        });
+      }, 5000);
+
+    }
+
+    $('.server_info').change(function(){
+      localStorage.setItem($(this).attr("name"), $(this).val());
+    });
+
+
+
+    </script>
+  </body>
+</html>

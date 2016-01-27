@@ -1,0 +1,85 @@
+
+In the appendix, we provide a snapshot of the code to further utilize
+multi-thread environment and speedup backend for handling the file uploading and downloading.
+There are Locking Queue and corresponding Pthread programming, which are discussed in
+\ref{naming_hash}
+.
+
+
+\subsection{Locking Queue}
+The locking queue class for future usage. 
+
+%\begin{figure}[h]
+%\centering
+\begin{lstlisting}
+template <typename Data>
+class oncurrent_Queue{
+private:
+    queue<Data> _queue;
+    mutable boost::mutex _mutex;
+    boost::condition_variable _cvariable;
+public:
+    void enque(Data const& data){
+	boost::mutex::scoped_lock lock(_mutex);
+	_queue.push(data);
+	lock.unlock();
+	_cvariable.notify_one();    
+    }
+
+    bool empty() const{
+	boost::mutex::scoped_lock lock(_mutex);
+	return _queue.empty();    
+    }
+
+    bool try_deque(Data& dequed_value){
+	boost::mutex::scoped_lock lock(_mutex);
+	if (_queue.empty()){
+	    return false;
+	}    
+	dequed_value = _queue.front();
+	_queue.pop();
+	return true;
+    }
+
+    void wait_and_deque(Data& dequed_value){
+	boost::mutex::scoped_lock lock(_mutex);
+	while(_queue.empty()) _cvariable.wait(lock);
+	dequed_value = _queue.front();
+	_queue.pop();    
+    }
+
+
+};
+
+void *checkUploadQueue(void* context){
+    int id = *(int*)thread;
+    while(true){
+	if (!uploadQueue.empty()){               
+	    string ret;
+	    uploadQueue.try_deque(ret);
+	}
+    }
+}
+\end{lstlisting}
+%\end{figure}
+
+\subsection{Pthread}
+
+The pthread can be utilized to 
+listen to the upload queue.
+
+%\begin{figure}[h]
+\begin{lstlisting}
+  TrustedBridgeHandler t(storageServer, storageServerPort);
+  const int NUM_UPLOAD_THREADS = 3;
+  pthread_t threads[NUM_UPLOAD_THREADS];;
+  for (int i = 0; i < NUM_UPLOAD_THREADS; ++i){ 
+      int rc = pthread_create(&threads[i], NULL, &TrustedBridgeHandler::checkUploadQueue, &t);
+      if (rc){
+	  exit(-1);    
+      }    
+  }
+\end{lstlisting}
+%\end{figure}
+
+

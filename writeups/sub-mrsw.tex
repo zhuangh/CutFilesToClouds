@@ -1,0 +1,75 @@
+
+We have design upload scheme using multple reader single wirter quene, based 
+on boost, but the sysnet system does 
+not support it.
+
+
+
+
+
+
+
+
+
+
+
+\begin{figure}
+\centering
+\begin{lstlisting}
+#define CONCURRENT_QUEUE
+#ifdef CONCURRENT_QUEUE
+template <typename Data>
+class oncurrent_Queue{
+private:
+    queue<Data> _queue;
+    mutable boost::mutex _mutex;
+    boost::condition_variable _cvariable;
+public:
+    void enque(Data const& data){
+	boost::mutex::scoped_lock lock(_mutex);
+	_queue.push(data);
+	lock.unlock();
+	_cvariable.notify_one();    
+    }
+
+    bool empty() const{
+	boost::mutex::scoped_lock lock(_mutex);
+	return _queue.empty();    
+    }
+
+    bool try_deque(Data& dequed_value){
+	boost::mutex::scoped_lock lock(_mutex);
+	if (_queue.empty()){
+	    return false;
+	}    
+	dequed_value = _queue.front();
+	_queue.pop();
+	return true;
+    }
+
+    void wait_and_deque(Data& dequed_value){
+	boost::mutex::scoped_lock lock(_mutex);
+	while(_queue.empty())
+	    _cvariable.wait(lock);
+	dequed_value = _queue.front();
+	_queue.pop();    
+    }
+
+
+};
+#endif
+\end{lstlisting}
+\caption{Implementation of Concurrent Queue}
+\end{figure}
+
+
+
+
+  
+  
+  
+
+
+It is still at the early age, many techniques, e.g.\cite{memcached2013}
+can be leveraged to enhance efficiency.
+

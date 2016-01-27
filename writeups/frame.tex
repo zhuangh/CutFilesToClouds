@@ -1,0 +1,8 @@
+\subsubsection{Client}
+The system (distributed working servers) provide users with uploading, downloading, deleting, newing folders, moving data opeations. Especially for the uploading operation usage, the user is required to set the "black-box" key and specified the security level {normal, high, premium} (higher level means more fragments a file will be partitioned, and it would lead to more time to process), which can be a figure or any combination of string and digits.Besides, the user need give the system access privilege to the external cloud storage servers (Google Drive, SkyDrive, Dropbox, etc). System will automatically maintain a table to record all the files' names and indices of their corresponding partitioned fragments. 
+
+\subsubsection{Server}
+Server need be in charge of three responsibilies: determining how to partition the file based on the key given by the user and carrying out the work, communicating with clients and external cloud stroage by transferring kinds of data, assembling the fragments to the original file. In the server, it needs update a dictionary to store which storage server the fragment has been stored and maintains the encrypted version of users' table.
+The system still need perform a "heart-beat" function to update this encrypted table by communicating with users periodically.
+\subsubsection{External distributed server}
+External distrbuted storage servers provide interface to working servers. They are responsible for storing, replicating, backup files.

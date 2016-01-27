@@ -1,0 +1,13 @@
+In this project, we derive our own idea and build a trustful file system
+\emph{Trusted Bridge}, which utlizes unstrustful popular cloud storages, e.g. Dropbox.%, Google Drive. 
+% We treat them as a untrusted storage systems, so that we build a bridge to  
+The approach is to partition the files, encrypt, and then send them into different cloud systems. 
+% We do not save users' files on our Trusted Bridge, while the other cloud storages 
+% only contains the segements of a single file.
+For a single file, we do not save it, and the cloud storages only contains a certain part of file 
+segments. 
+In this project, we use C/C++ to handle the backend design and use wrap interface to invoke Jave, Python
+for API from Dropbox, Google Drive. The PHP is used to handle the HTTP requests. 
+Experiement shows that after removing the Dropbox API overhead, the user could save their files in their own cloud storage without losing the privacy. What he or she scarifies is just about 8\% to 10\% performance lose, which could hardly be noticed especially when user run our service in background like how current Dropbox or Google Drive works.
+
+

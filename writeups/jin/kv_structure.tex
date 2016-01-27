@@ -1,0 +1,13 @@
+\subsection{Key-Value strucutures}
+To provide more convenient service for trusted bridge server, 
+we design the following key value pairs. 
+The first kind $<$username clouds, token array for the cloud storage$>$ 
+is used to record user's tokens for different cloud storage access. 
+The second kind $<$username files , filename lists$>$ record the list 
+of filenames the user has uploaded. 
+The key for the third one is username plus filename,
+the value corresponding to it is the list of segment name. 
+The fifth pair's key is username plus segment name, 
+the value is the place of the cloud who has this segment. 
+The last kind is the pair username and the key it specified 
+when registraing a new user. 

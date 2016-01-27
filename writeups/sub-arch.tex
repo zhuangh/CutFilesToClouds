@@ -1,0 +1,11 @@
+
+\begin{figure*}[ht]
+\centering
+%\includegraphics[width=3.5in]{pics/system_architecture.eps}
+\includegraphics[width=5.2in]{pics/arch.png}
+\caption{Trusted Bridge architecture}
+\label{fig:arch}
+\end{figure*}
+
+Trusted Bridge provides users a convenient online storage environment without losing their privacy. To achieve this goal, we implement the system with the following structure, please see Figure~\ref{fig:arch}. We build all the blocks with blue color and take advantage from lab3 key-value storage system. The Trusted Bridge server and key-value storage server are built in sysnet clusters. The front-end web server is portable. It could be served right into sysnet clusters but it also could be run as a remote service on any Apache and PHP environment. The following sections will describe the detail implementation of each components. 
+

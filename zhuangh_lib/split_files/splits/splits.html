@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html version="-//W3C//DTD HTML 3.2 Final//EN">
+<head>
+<title>SPLITS: Split a binary file into multiple chunks</title>
+<meta name="author" content="John Walker">
+<meta name="description" content="SPLITS: Split a binary file into multiple chunks">
+<meta name="keywords" content="split, binary, file, utility">
+</head>
+<body bgcolor="#FFFFFF">
+<center>
+<font color="#FF2407">
+<h1><img src="splits.gif" alt="SPLITS" width=273 height=93></h1>
+<h2>
+Split a Binary File into Multiple Chunks
+</h2>
+</font>
+</center>
+
+<hr>
+
+<p>
+This page describes a program, <b>splits</b>, which splits
+a file into multiple pieces of a specified size.
+
+<p>
+
+
+<h3>NAME</h3>
+    <b>splits</b> - split a binary file into multiple chunks
+
+<h3>SYNOPSIS</h3>
+    <b>splits</b> <em>infile</em> [ <em>chunksize</em> ]
+
+<h3>DESCRIPTION</h3>
+
+       <b>splits</b> reads an input file infile (or standard input if
+       infile is "-") and creates multiple output files which consist
+       of the contents of infile broken into sequential pieces of size
+       chunksize, given in "K" (units of 1024 bytes).  If no chunksize
+       is specified, <b>splits</b> assumes an output file size of 100K
+       (102400 bytes).
+
+<p>
+       <b>splits</b> is useful when transmitting large binary files
+       over unreliable modem links with <b>uucp</b>.  An accidental
+       disconnection during a transmission causes the loss of
+       everything received up to that point, requiring the user to
+       start over from scratch.  Breaking the file into multiple
+       chunks with splits means that a disconnection only requires
+       re-sending the chunk being transmitted when the hang-up
+       occurred; if a chunk size substantially smaller than the
+       average time between disconnects is chosen, lost communication
+       time will be minimised.
+
+<p>
+       <b>splits</b> may also be used to split large files being sent
+       by electronic mail into pieces small enough to pass through
+       intermediate mail forwarding sites.  Some Internet mailers
+       cannot process messages larger than 64K. <b>splits</b> allows
+       you to circumvent this limitation.  When sending binary files
+       through electronic mail, you'll also have to encode the output
+       of splits with a program such as <b>uuencode</b> or <b><a
+       href="/webtools/base64/">base64</a></b> since most mail systems
+       accept only 7 bit ASCII characters.
+
+<p>
+       Finally, <b>splits</b> allows subdividing large files into
+       pieces which fit on various kinds of removable media such as
+       1.44 megabyte floppy discs.
+
+<p>
+       On Unix the collection of chunks created with <b>splits</b> can
+       be reassembled with <b>cat</b>.  Simply use:
+
+<pre>
+       cat <em>infile</em>.* &gt;<em>infile</em>
+</pre>
+
+       to concatenate all the chunks together into an output file
+       identical to the original splits input file.  MS-DOS users can
+       use the:
+
+<pre>
+       COPY /B <em>infile1</em>+...+<em>infilen</em> <em>outfile</em>
+</pre>
+
+       command to concatenate chunks created with <b>splits</b>.
+
+<p>
+       When sending files in multiple chunks, it's wise to accompany
+       the transmission with a checksum created, for example, with
+       <b>sum</b> or <b>brik</b>, so that the recipient can verify
+       that all the pieces were correctly received and assembled in
+       the proper order.
+
+<h3>OPTIONS</h3>
+
+None.
+
+<h3>FILES</h3>
+    If infile is "-" <b>splits</b> obtains its input from standard
+    input.  In this case the output files are named
+    <code>StdIn.001</code>, <code>StdIn.002</code>, etc.
+
+<h3>BUGS</h3>
+
+       <b>splits</b> assumes it can allocate memory buffers as large
+       as the chunk size and that it can read and write blocks that
+       large.  Surgery will be required if you wish to port it to 16
+       bit architectures.
+
+<p>
+       <b>splits</b> must read input and write output
+       files in binary mode, without any translation of end of line
+       or end of file characters.  The <b>splits</b> source code
+       contains code conditional on <b>WIN32</b> which
+       sets binary mode on that system.  If you're porting
+       <b>splits</b> to another platform which distinguishes
+       text and binary I/O (Unix systems do not), you'll need to
+       add equivalent code to set binary I/O mode.
+
+<h2><a href="splits.zip"><img src="/images/icons/file.gif" alt="" align=middle width=40 height=40></a> <a href="splits.zip">Download splits.zip</a> (Zipped archive)</h2>
+
+    The program is provided as <a href="splits.zip">splits.zip</a>, a
+    <a href="http://www.pkware.com/">Zipped</a> archive containing an
+    ready-to-run WIN32 command-line executable program, <code>splits.exe</code>
+    (compiled using Microsoft Visual C++ 5.0),
+    and in source code form along with a
+    <code>Makefile</code> to build the program under Unix.
+
+<h3>SEE ALSO</h3>
+    <b><a href="/webtools/base64/">base64</a></b>(1),
+    <b>brik</b>(1), <b>cat</b>(1), <b>split</b>(1),
+    <b>sum</b>(1), <b>uucp</b>(1), <b>uuencode</b>(1)
+
+<h3>EXIT STATUS</h3>
+     <b>splits</b> returns status 0 if processing was
+     completed without errors, 1 if an error occurs while splitting
+     a file, and 2 if invalid command line arguments are given.
+
+<h3>COPYING</h3>
+
+<blockquote>
+     This software is in the public domain.  Permission to use, copy,
+     modify, and distribute this software and its documentation for
+     any purpose and without fee is hereby granted, without any
+     conditions or restrictions.  This software is provided "as is"
+     without express or implied warranty.
+</blockquote>
+
+<hr>
+<address>
+<a href="/">by John Walker</a><br>
+October 27th, 1998
+</address>
+</body>
+</html>

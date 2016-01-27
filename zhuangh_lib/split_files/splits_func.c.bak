@@ -1,0 +1,78 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <malloc.h>
+#include <iostream>
+
+using namespace std;
+
+//int main(int argc, char *argv[])
+int splits_func( const string filename, int  filesize  )
+{
+    char splitfn[280];
+    long part = 0, chunk = 100 * 1024;
+    FILE *fp, *op;
+    //char *fb;
+    void *fb;
+    string ofn = "StdIn";
+
+    long lch = filesize;
+
+    if (lch < 1) {
+	fprintf(stderr, "Invalid chunk size.\n");
+	return 2;
+    }
+    chunk = lch * 1024L;
+
+    fb = malloc((unsigned) chunk);
+    if (fb == NULL) {
+	fprintf(stderr, "Unable to allocate %ld byte I/O buffer.\n", chunk);
+	return 1;
+    }
+    ofn = filename;
+    fp = fopen(filename.c_str(), "rb");
+    if (fp == NULL) {
+	fprintf(stderr, "Cannot open file %s\n", filename.c_str());
+	return 2;
+    }
+
+
+
+    while (1) {
+	long fl;
+//	chunk = chunk_series[part];
+
+
+	fl = fread(fb, 1, (int) chunk, fp);
+	if (fl > 0) {
+	    sprintf(splitfn, "%s.%03ld", ofn.c_str(), ++part);
+	    op = fopen(splitfn, "wb");
+	    if (op == NULL) {
+                fprintf(stderr, "Cannot create output file %s\n", splitfn);
+		return 2;
+	    }
+	    fwrite(fb, 1, (int) fl, op);
+	    fclose(op);
+	} else {
+	    break;
+	}
+
+    }
+    if (fp != stdin) {
+	fclose(fp);
+    }
+
+
+   
+
+    printf("It is divided into %ld part\n",part);
+
+    return 0;
+}
+
+
+int main(){
+    splits_func("div_test.exe",5);
+    return 0;
+}

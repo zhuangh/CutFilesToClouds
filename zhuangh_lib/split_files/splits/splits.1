@@ -1,0 +1,142 @@
+'\" t
+.TH SPLITS 1 "27 OCT 1998"
+.UC 4
+.SH NAME
+splits \- split a binary file into multiple chunks
+.SH SYNOPSIS
+.B splits
+.I infile
+[
+.I chunksize
+]
+.SH DESCRIPTION
+.B splits
+reads an input file
+.I infile
+(or standard input if
+.I infile
+is `\-') and creates multiple output files which consist of the
+contents of
+.I infile
+broken into sequential pieces of size
+.IR chunksize ,
+given in `K' (units of 1024 bytes).  If no
+.I chunksize
+is specified,
+.B splits
+assumes an output file size of 100K (102400 bytes).
+.PP
+.B splits
+is useful when transmitting large binary files over unreliable
+modem links with
+.BR uucp .
+An accidental disconnection during a transmission causes the loss of
+everything received up to that point, requiring the user to start over
+from scratch.
+Breaking the file into multiple chunks with
+.B splits
+means that a disconnection only requires re-sending the chunk being
+transmitted when the hang-up occurred; if a chunk size substantially
+smaller than the average time between disconnects is chosen, lost
+communication time will be minimised.
+.PP
+.B splits
+may also be used to split large files being sent by electronic mail
+into pieces small enough to pass through intermediate mail forwarding sites.
+Some Internet mailers cannot process messages larger than 64K.
+.B splits
+allows you to circumvent this limitation.  When sending binary files
+through electronic mail, you'll also have to encode the output of
+.B splits
+with
+.B uuencode
+or
+.B base64
+since most mail systems accept only 7 bit ASCII characters.
+.PP
+Finally,
+.B splits
+allows subdividing large files into pieces which fit on various kinds
+of removable media such as 1.44 megabyte floppy discs.
+.PP
+The collection of chunks created with
+.B splits
+can be reassembled with
+.BR cat .
+Simply use:
+.PP
+.B cat
+.IR infile .*
+.RI >infile
+.PP
+to concatenate all the chunks together into an output file identical to
+the original
+.B splits
+input file.  MS-DOS users can use the:
+.PP
+.B "COPY /B"
+.IR infile1 + ... + infilen
+.I outfile
+.PP
+command to concatenate chunks created with
+.BR splits .
+.PP
+When sending files in multiple chunks, it's wise to accompany the
+transmission with a checksum created, for example, with
+.B sum
+or
+.BR brik ,
+so that the recipient can verify that all the pieces were correctly
+received and assembled in the proper order.
+.SH OPTIONS
+None.
+.SH FILES
+If
+.I infile
+is `\-'
+.B splits
+obtains its input from standard input.  In this case the output files
+are named StdIn.001, StdIn.002, etc.
+.SH BUGS
+.B splits
+assumes it can allocate memory buffers as large as the chunk size and
+that it can read and write blocks that large.  Surgery will be required
+if you wish to port it to 16 bit architectures.
+.PP
+.B splits
+must read input and write output
+files in binary mode, without any translation of end of line
+or end of file characters.  The
+.B splits
+source code
+contains code conditional on
+.B WIN32
+which sets binary mode on that system.  If you're porting
+.B splits
+to another platform which distinguishes
+text and binary I/O (Unix systems do not), you'll need to
+add equivalent code to set binary I/O mode.
+.SH "SEE ALSO"
+.PD
+.BR base64 (1),
+.BR brik (1),
+.BR cat (1),
+.BR split (1),
+.BR sum (1),
+.BR uucp (1),
+.BR uuencode (1)
+.ne 10
+.SH AUTHOR
+.RS 5
+.nf
+John Walker
+<http://www.fourmilab.ch/>
+.fi
+.RE
+.PD
+.PP
+This software is in the public domain.
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+without any conditions or restrictions.  This software is provided ``as
+is'' without express or implied warranty.

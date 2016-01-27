@@ -1,0 +1,87 @@
+
+
+File Partitioning is the key point of this system and it inclues two main 
+problems: first one is how to partition the file and the 
+other one is how fine-grained the file need to be partitioned.
+For the first one, 
+when a file is uploaded to our server, we need to dispatch the file to different
+cloud storages. Our strategy is to read the 
+file and truncate content on the fly, so that
+the large files do not occupy the large chunk of memory.
+For implementation, we also use JSON in Boost to  
+control hierachical key value format, e.g. the order of segments for a file,
+the mapping from file to segments and different cloud services.
+First, the process get the parameter vector to specify how many segments for this
+file, and what the sizes are respectively.
+During the processs of spliting, it also invokes \emph{GetSegmentName()} to get a 
+encrypted name for such segement, which appear in the cloud storage. Others cannot 
+judge the file by name. The method of \emph{GetSegmentName()} is demonstrated in Sec. \ref{naming_hash}.
+The pseudo code is shown in Fig. \ref{fig:fsplit}.
+
+%\setlength{\belowcaptionskip}{0pt minus 10pt}
+\begin{figure*}[hbt]
+\centering
+\begin{lstlisting}
+fp = fopen(file, "rb"):
+for (int it = 0 ; it < chunk_size_array.size ; it++){
+  buffer = malloc(chunk_size_array[it]);
+  file_name = GetSegmentName(user_key)
+  // treating every file as binary 
+  segment_file = fopen(file_name, "wb")
+  fwrite(buffer,1,current , segment_file);
+  fclose(segment_file);
+  free(buffer);
+  // use hierachical Key Value pair by JSON 
+  // It provide a file contains what segments,
+  // their order, and position.
+  // Simplify the process by register_to_key_value() as follows
+  register_to_key_value(user, cloudID, file , segment_order , segment_name);
+}
+\end{lstlisting}
+\caption{Pesudo Code of File Spliting}
+\label{fig:fsplit}
+\end{figure*}
+
+For the merge of segments from different clouds, we fetch them from their repositories at first, 
+Following the records from our key value storage, assemble them together accordingly.
+
+\begin{comment}
+\begin{figure}
+\centering
+\begin{lstlisting}
+// Download the segments in order througth Key Value storage's guide
+std::list<string> l;
+int index = 1;
+BOOST_FOREACH(ptree::value_type& v, pt.get_child("array")){
+   counter = boost::lexical_cast<string>(index++);
+   segmentName = v.second.get_child(counter).data();
+   key = FormKey(user_key, segmentName);
+   GetResponse response = Get(key);
+   // find out which cload ID
+   extid = response.value;
+   Download(username, segmentName, cloudID);
+   l.push_back(segmentName);    
+}
+
+file_name
+fp = fopen(file, "rb"):
+for (int it = 0 ; it < chunk_size_array.size ; i++){
+  buffer = malloc(chunk_size_array[it]);
+  file_name = GetSegmentName(user_key)
+  // treating every file as binary 
+  segment_file = fopen(file_name, "wb")
+  fwrite(buffer,1,current , segment_file);
+  fclose(segment_file);
+  free(buffer);
+  // use hierachical Key Value pair by JSON 
+  register_to_key_value(user, file , segment_order , segment_name);
+}
+\end{lstlisting}
+\caption{Pesudo Code of File Merge}
+\end{figure}
+\end{comment}
+
+\input{kv_example}
+
+
+

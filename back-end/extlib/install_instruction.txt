@@ -1,0 +1,11 @@
+1. Go to the encrypto folder
+2. run "make static dynamic test"
+3. run "make install PREFIX=~/cryptopp"
+
+PREFIX specifies the folder to store the .so .a .exe files
+
+
+3. If we want to compile a program, we can link with the static library
+    by running "g++ -o test.exe test.cpp ~/cryptopp/lib/libcryptopp.a"
+
+
